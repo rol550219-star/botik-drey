@@ -1,38 +1,27 @@
-from aiogram import Bot, Dispatcher, types, F
+from aiogram import Bot, Dispatcher, types
+from aiogram.filters import Command
 import asyncio
+import os
 
-# Встав сюда токен своего нового бота
-TOKEN = "8919222965:AAGWDXM37zW3mzHWuCf9B2a0taxXTEttmVM"
-
+# Твій токен береться зі змінних середовища, які ми налаштували
+bot = Bot(token=os.getenv("8919222965:AAGWDXM37zW3mzHWuCf9B2a0taxXTEttmVM"))
 dp = Dispatcher()
 
-# Приветствие
-@dp.message(F.text == "/start")
-async def start(message: types.Message):
-    await message.answer("Привет! Я твой личный бот. О чем хочешь пообщаться?")
+@dp.message(Command("start"))
+async def start_handler(message: types.Message):
+    await message.answer("Привіт! Я твій особистий бот. Що хочеш обговорити?")
 
-# Логика ответов
 @dp.message()
-async def chat(message: types.Message):
-    user_text = message.text.lower()
-    
-    if "привет" in user_text:
-        await message.answer("Привет! Как дела?")
-    elif "как дела" in user_text:
-        await message.answer("У меня всё отлично! А у тебя?")
-    elif "кто ты" in user_text:
-        await message.answer("Я твой личный чат-бот, которого ты сам создал!")
-    elif "что делаешь" in user_text:
-        await message.answer("Общаюсь с тобой, конечно!")
+async def echo_handler(message: types.Message):
+    # Тут можна додати логіку, щоб він відповідав на різні питання
+    if "хто" in message.text.lower():
+        await message.answer("Я — твій бот, якого ти сам створив!")
     else:
-        # Если бот не знает, что ответить, он ответит это:
-        await message.answer("Интересно... расскажи подробнее?")
+        await message.answer(f"Ти написав: {message.text}")
 
 async def main():
-    bot = Bot(token=TOKEN)
-    print("Бот запущен и готов к общению!")
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
     asyncio.run(main())
-                             
+    
